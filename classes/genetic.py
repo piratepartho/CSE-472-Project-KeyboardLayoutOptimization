@@ -10,7 +10,9 @@ from multiprocessing import Process, Manager
 from threading import Thread
 from helpers import *
 
-punct = True
+punct = False
+def info_log(msg):
+    pass
 
 class Genetic:
     def __init__(
@@ -26,7 +28,6 @@ class Genetic:
         testing_corpus_size,
         maximum_line_length,
         random_seed,
-        number_of_cores,
         keyboard_structure,
         initial_characters_placement
     ):
@@ -50,7 +51,6 @@ class Genetic:
         self.number_of_accepted_characters_placements = number_of_accepted_characters_placements
         self.number_of_randomly_injected_characters_placements = number_of_randomly_injected_characters_placements
         self.maximum_number_of_mutation_operations = maximum_number_of_mutation_operations
-        self.number_of_cores = number_of_cores
         self.keyboard_structure = keyboard_structure
         self.initial_characters_placement = initial_characters_placement
         self._regex = re.compile('[^%s]' % ''.join(sorted(set(self.initial_characters_placement))))
@@ -95,7 +95,7 @@ class Genetic:
         self.best_characters_placement = None
 
     def buildCarpalxInput(self, keyboard):
-        carpalx_file_name = "carpalx-0.12\keren\keren.conf"
+        carpalx_file_name = "./etc/genetic_keyboard.conf"
         with open(carpalx_file_name, 'w') as keyboard_file:
             keyboard_file.write(
                 "<keyboard>\n<row 1>\nkeys    = `~ 1! 2@ 3\\# 4$ 5% 6^ 7& 8* 9( 0) -_ =+\nfingers =  0  1  1   2  3  3  3  6 7   7  8  9  9\n</row>\n<row 2>\nkeys    =")
@@ -186,7 +186,7 @@ class Genetic:
                 else:
                     self.buildCarpalxInput(b[0])
                 # this line is problematic, should use corresponding conf file
-                my_cmd = "perl carpalx-0.12/keren/carpalx_keren -conf carpalx-0.12/etc/tutorial-00.conf"
+                my_cmd = "perl carpalx_bangla -conf test.conf -keyboard_input genetic_keyboard.conf"
                 my_cmd_output = os.popen(my_cmd)
 
                 for line in my_cmd_output:
