@@ -17,7 +17,7 @@ tf.random.set_seed(random_seed)
 
 punct = False
 # random keyboard generated, make it small to run faster
-number_of_characters_placements = 10
+number_of_characters_placements = 1000
 
 def buildCarpalxInput(keyboard):
     carpalx_file_name = "./etc/gen_net_keyboard.conf"
@@ -115,6 +115,8 @@ print("generating labeled keyboards...")
 characters_placements = list()
 labels = np.zeros([number_of_characters_placements], dtype=float)
 for i in range(number_of_characters_placements):
+    if i % 50 == 0:
+        print(i)
     # making number_of_characters_placements(10000) keyboards randomly
     characters_placements.append(copy.deepcopy(initial_characters_placement))
     characters_placements[-1].randomize()
