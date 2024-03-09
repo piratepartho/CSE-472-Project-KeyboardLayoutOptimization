@@ -25,8 +25,6 @@ with open(data_file_path, 'r') as data_file:
         print(f)
         line = data_file.readline()
         values = line.split(' ')
-        # print(values)
-        # print(len(values))
 
         for i in range(num_of_characters):
             for j in range(num_of_characters):
@@ -36,7 +34,6 @@ with open(data_file_path, 'r') as data_file:
                     print(values)
                     print(f, i, j)
                     exit()
-
 
         labels[f] = float(values[-1])
 

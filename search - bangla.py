@@ -2,12 +2,10 @@ import os
 import json
 import argparse
 
-# from helpers import *
+from helpers import *
 from classes.keyboard_structure import KeyboardStructure
 from classes.characters_placement import CharactersPlacement
 from classes.genetic import Genetic
-def info_log(message):
-    pass
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -48,13 +46,6 @@ if __name__ == '__main__':
         initial_characters_placement=initial_characters_placement
     )
     genetic.start()
-    #genetic.save_searching_and_testing_corpus(os.path.dirname(args.genetic_config))
-
-    #genetic.best_characters_placement.calculate_fitness(
-    #    genetic.keyboard_structure,
-    #    genetic.testing_corpus_dict
-    #)
-    #info_log('Best characters placement fitness value on testing set: %s' % genetic.best_characters_placement.fitness)
 
     info_log('Visualize best characters placement found by genetic algorithm')
     genetic.keyboard_structure.visualize(

@@ -467,7 +467,7 @@ sub resolve_path {
   if($is_absolute) {
     return $file;
   } else {
-    return "$CONF{configdir}/$file";
+    return "$file";
   }
 }
 

@@ -6,6 +6,92 @@ import numpy as np
 from helpers import *
 from classes.button import Button
 from classes.hand import Hand
+from PIL import ImageFont, ImageDraw, Image
+
+bengali_to_english = {
+    '১': '1',
+    '২': '2',
+    '৩': '3',
+    '৪': '4',
+    '৫': '5',
+    '৬': '6',
+    '৭': '7',
+    'ঁ' : '&',
+    '৮': '8',
+    '৯': '9',
+    '০': '0',
+    'ঙ': 'q',
+    'ং': 'Q',
+    'য': 'w',
+    'য়': 'W',
+    'ড': 'e',
+    'ঢ': 'E',
+    'প': 'r',
+    'ফ': 'R',
+    'ট': 't',
+    'ঠ': 'T',
+    'চ': 'y',
+    'ছ': 'Y',
+    'জ': 'u',
+    'ঝ': 'U',
+    'হ': 'i',
+    'ঞ': 'I',
+    'গ': 'o',
+    'ঘ': 'O',
+    'ড়': 'p',
+    'ঢ়': 'P',
+    'ৎ': '\\',
+    'ঃ': '|',
+    'ৃ': 'a',
+   'র্' : 'A',
+    'ু': 's',
+    'ূ': 'S',
+    'ি': 'd',
+    'ী': 'D',
+    'া': 'f',
+    'অ': 'F',
+    'আ': 'Ff',
+    '্': 'g',
+    '।': 'G',
+    'ব': 'h',
+    'ভ': 'H',
+    'ক': 'j',
+    'খ': 'J',
+    'ত': 'k',
+    'থ': 'K',
+    'দ': 'l',
+    'ধ': 'L',
+    '্র': 'z',
+    '্য': 'Z',
+    'ও': 'x',
+    'ৗ': 'X',
+    'ে': 'c',
+    'ৈ': 'C',
+    'এ': 'gc',
+    'ঐ': 'gC',
+    'ঔ': 'gX',
+    'ই' : 'gd',
+    'ঈ' : 'gD',
+    'উ' : 'gs',
+    'ঊ' : 'gS',
+    'ঋ': 'ga',
+    'ো': 'cf',
+    'ৌ': 'cX',
+    'র' : 'v',
+    'ল' : 'V',
+    'ন' : 'b',
+    'ণ' : 'B',
+    'স' : 'n',
+    'ষ' : 'N',
+    'ম' : 'm',
+    'শ' : 'M',
+    '‘' : '`',
+    '“' : '~',
+    '”' : '"',
+    '’' : '\'',
+    ' ' : ' ',
+}
+
 
 class KeyboardStructure:
     def __init__(self, name, width, height, buttons, hands):
@@ -74,17 +160,31 @@ class KeyboardStructure:
                         color=hand_color,
                         thickness=-1
                     )
+        english_to_bengali = {v: k  for k, v in bengali_to_english.items() if len(v) == 1}
+        print(english_to_bengali)
+        fontpath = "./sol.ttf"     
+        font = ImageFont.truetype(fontpath, 20, encoding='unic')
+        img_pil = Image.fromarray(img)
+        draw = ImageDraw.Draw(img_pil)
 
         for button, character in zip(self.buttons, characters_placement):
+            pos = cm2px((button.text_origin.x, button.text_origin.y))
+            pos = (pos[0] + 13, pos[1] - 35)
+            draw.text((pos[0], pos[1] + 20),  english_to_bengali[character] if character in english_to_bengali else character, font = font, fill = (0,0,255,0))
+            if character in english_to_bengali and character.upper() != character:
+                draw.text(pos,  english_to_bengali[character.upper()] if character in english_to_bengali else character, font = font, fill = (0,0,255,0))
             cv.putText(
                 img=img,
                 text=character,
                 org=cm2px((button.text_origin.x, button.text_origin.y)),
-                fontFace=cv.FONT_HERSHEY_SIMPLEX,
+                fontFace=cv.FONT_HERSHEY_COMPLEX,
                 fontScale=1,
                 color=(241, 240, 236),
                 thickness=2
             )
+        
+        # draw.text((500, 100),  'অ', font = font, fill = (0,0,255,0))
+        img = np.array(img_pil)
 
         cv.imshow(self.name, img)
         cv.waitKey(0)

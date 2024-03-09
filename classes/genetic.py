@@ -11,8 +11,6 @@ from threading import Thread
 from helpers import *
 
 punct = False
-def info_log(msg):
-    pass
 
 class Genetic:
     def __init__(
@@ -55,37 +53,7 @@ class Genetic:
         self.initial_characters_placement = initial_characters_placement
         self._regex = re.compile('[^%s]' % ''.join(sorted(set(self.initial_characters_placement))))
 
-        self.corpus = open(corpus_path, 'r', encoding='utf-8').read().split('\n')
-        self.corpus = [line for line in self.corpus if len(line) <= maximum_line_length]
-
-        rng = np.random.RandomState(random_seed)
-        rng.shuffle(self.corpus)
-
-        self.searching_corpus = [self._preprocess_line(line) for line in self.corpus[:searching_corpus_size]]
-
-        if len(self.searching_corpus) < searching_corpus_size:
-            warning_log('Searching corpus size didn\'t reach %s, its current size is %s' %
-                (searching_corpus_size, len(self.searching_corpus)))
-
-        self.searching_corpus_dict = dict()
-        for line in self.searching_corpus:
-            for char in line.strip():
-                try: self.searching_corpus_dict[char] += 1
-                except: self.searching_corpus_dict[char] = 1
-
-        self.testing_corpus = [self._preprocess_line(line) for line in
-                            self.corpus[searching_corpus_size:searching_corpus_size + testing_corpus_size]]
-
-        if len(self.testing_corpus) < testing_corpus_size:
-            warning_log('Testing corpus size didn\'t reach %s, its current size is %s' %
-                (testing_corpus_size, len(self.testing_corpus)))
-
-        self.testing_corpus_dict = dict()
-        for line in self.testing_corpus:
-            for char in line.strip():
-                try: self.testing_corpus_dict[char] += 1
-                except: self.testing_corpus_dict[char] = 1
-
+        
         self.characters_placements = list()
         for _ in range(self.number_of_characters_placements):
             self.characters_placements.append(copy.deepcopy(self.initial_characters_placement))
@@ -124,7 +92,7 @@ class Genetic:
     def buildCarpalxInput_punct(self, keyboard):
         punct_map = {"-": "-_", "+": "=+", "{": "[{", "}": "]}", ";": ";:", "'": "'\"", ",": ",<", ".": ".>", "?": "/?"}
 
-        carpalx_file_name = "carpalx-0.12\keren\keren.conf"
+        carpalx_file_name = "./etc/genetic_keyboard.conf"
         with open(carpalx_file_name, 'w') as carpalx_file:
             carpalx_file.write("<keyboard>\n<row 1>\nkeys    = `~ 1! 2@ 3\\# 4$ 5% 6^ 7& 8* 9( 0)")
 
@@ -186,10 +154,11 @@ class Genetic:
                 else:
                     self.buildCarpalxInput(b[0])
                 # this line is problematic, should use corresponding conf file
-                my_cmd = "perl carpalx_bangla -conf test.conf -keyboard_input genetic_keyboard.conf"
+                my_cmd = "perl carpalx_bangla -conf test.conf -keyboard_input .\etc\genetic_keyboard.conf"
                 my_cmd_output = os.popen(my_cmd)
 
                 for line in my_cmd_output:
+                    # print("line: ", line)
                     true_fitness.append(float(line.rstrip()))
 
             print("true fitness: ", [true_fitness[i] for i in range(10)])
@@ -210,6 +179,8 @@ class Genetic:
             if self.best_characters_placement is None or best_fitness_value < self.best_fitness_value:
                 self.best_characters_placement = best_characters_placement
                 self.best_fitness_value = best_fitness_value
+            with open('fitness_info.csv', 'a') as file:
+                file.write(f'{generation},{self.best_fitness_value}\n')
             info_log('Best characters placement fitness value: %s' % self.best_fitness_value)
 
             info_log('Start natural selection and crossover')

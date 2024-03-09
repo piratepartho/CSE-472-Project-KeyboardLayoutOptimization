@@ -61,6 +61,7 @@ class CharactersPlacement:
     def _non_fixed_random_character(self):
         rand = np.random.randint(0, len(self.characters_set) - 1)
         while self.characters_set[rand].button_id != None:
+            print("found one non fixed")
             rand = np.random.randint(0, len(self.characters_set) - 1)
         return rand
 
