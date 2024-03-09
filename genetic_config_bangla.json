@@ -1,5 +1,5 @@
 {
-    "number_of_generations": 30,
+    "number_of_generations": 15,
     "number_of_characters_placements": 1000,
     "number_of_parent_placements": 20,
     "number_of_accepted_characters_placements": 50,

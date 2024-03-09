@@ -27,13 +27,19 @@ class Genetic:
         maximum_line_length,
         random_seed,
         keyboard_structure,
-        initial_characters_placement
+        initial_characters_placement,
+        cnn = False
     ):
 
         path_str = ""
         if (punct):
             path_str = "_punct"
-        self.model = tf.keras.models.load_model('saved_model/my_model' + path_str)
+        if not cnn:
+            self.model = tf.keras.models.load_model('saved_model/my_model' + path_str)
+            self.filename = 'fitness_info.csv'
+        else:
+            self.model = tf.keras.models.load_model('saved_model/my_model_cnn' + path_str)
+            self.filename = 'fitness_info_cnn.csv'
 
         self.my_letters = []
         self.my_buttons = [keyboard_structure.buttons[i].id for i in range(len(keyboard_structure.buttons))]
@@ -135,14 +141,14 @@ class Genetic:
             self.model_best = self.calculate_fitness_for_characters_placements()
             info_log('model fitness value: %s' % self.model_best[0][2])
 
-            same_kb = True
-            num_same = 0
-            while same_kb:
-                for i in range(len(self.my_letters)):
-                    for j in range(len(self.my_letters)):
-                        if self.model_best[num_same][1][i][j]!=self.model_best[num_same+1][1][i][j]:
-                            same_kb=False
-                num_same += 1
+            # same_kb = True
+            # num_same = 0
+            # while same_kb:
+            #     for i in range(len(self.my_letters)):
+            #         for j in range(len(self.my_letters)):
+            #             if self.model_best[num_same][1][i][j]!=self.model_best[num_same+1][1][i][j]:
+            #                 same_kb=False
+            #     num_same += 1
             #print("Number of same keyboards: ", num_same)
 
             print("model fitness: ", [self.model_best[i][2] for i in range(10)])
@@ -179,7 +185,7 @@ class Genetic:
             if self.best_characters_placement is None or best_fitness_value < self.best_fitness_value:
                 self.best_characters_placement = best_characters_placement
                 self.best_fitness_value = best_fitness_value
-            with open('fitness_info.csv', 'a') as file:
+            with open(self.filename, 'a') as file:
                 file.write(f'{generation},{self.best_fitness_value}\n')
             info_log('Best characters placement fitness value: %s' % self.best_fitness_value)
 

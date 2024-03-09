@@ -43,7 +43,8 @@ if __name__ == '__main__':
         maximum_line_length=genetic_config['maximum_line_length'],
         random_seed=genetic_config['random_seed'],
         keyboard_structure=keyboard_structure,
-        initial_characters_placement=initial_characters_placement
+        initial_characters_placement=initial_characters_placement,
+        cnn=True
     )
     genetic.start()
 
